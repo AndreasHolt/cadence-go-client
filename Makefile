@@ -33,7 +33,7 @@ BIN := $(BUILD)/bin
 #
 # this can _likely_ remain a major version, as fmt output does not tend to change in minor versions,
 # which will allow findstring to match any minor version.
-EXPECTED_GO_VERSION := go1.24
+EXPECTED_GO_VERSION := go1.26
 CURRENT_GO_VERSION := $(shell go version)
 ifeq (,$(findstring $(EXPECTED_GO_VERSION),$(CURRENT_GO_VERSION)))
 # if you are seeing this warning: consider using https://github.com/travis-ci/gimme to pin your version
@@ -282,7 +282,7 @@ build: $(BUILD)/lint ## ensure all packages build
 	go test -exec true ./... >/dev/null
 	$Q # compare the current go version with what is in go.mod, and get `{gomod_version}.1` or similar and ensure it builds.
 	$Q GOVERSION="$(shell go env GOVERSION | cut -d. -f1-2)" \
-		MODVERSION="go$(shell grep '^go 1' go.mod | cut -d' ' -f2)"; \
+		MODVERSION="go$(shell grep '^go 1' go.mod | cut -d' ' -f2 | cut -d. -f1-2)"; \
 		if [ "$$GOVERSION" != "$$MODVERSION" ]; then \
 		echo "go.mod version \"$$MODVERSION\" is not the same as current go version \"$$GOVERSION\", making sure it builds..."; \
 		echo GOTOOLCHAIN="$$MODVERSION".1 go build ./...; \
